@@ -177,9 +177,10 @@ static void emulate_monitor_status_change(struct intel_vgpu *vgpu)
 		enum port port;
 
 		/* Clear PIPE, DDI, PHY, HPD before setting new */
-		vgpu_vreg_t(vgpu, GEN8_DE_PORT_ISR) &= ~(BXT_DE_PORT_HP_DDIA |
-			BXT_DE_PORT_HP_DDIB |
-			BXT_DE_PORT_HP_DDIC);
+		vgpu_vreg_t(vgpu, GEN8_DE_PORT_ISR) &=
+			~(BXT_DE_PORT_HP_DDI(HPD_PORT_A) |
+			  BXT_DE_PORT_HP_DDI(HPD_PORT_B) |
+			  BXT_DE_PORT_HP_DDI(HPD_PORT_C));
 
 		for_each_pipe(dev_priv, pipe) {
 			vgpu_vreg_t(vgpu, PIPECONF(pipe)) &=
@@ -284,7 +285,7 @@ static void emulate_monitor_status_change(struct intel_vgpu *vgpu)
 			vgpu_vreg_t(vgpu, PCH_PORT_HOTPLUG) |=
 				PORTA_HOTPLUG_ENABLE;
 			vgpu_vreg_t(vgpu, GEN8_DE_PORT_ISR) |=
-				BXT_DE_PORT_HP_DDIA;
+				BXT_DE_PORT_HP_DDI(HPD_PORT_A);
 		}
 
 		if (intel_vgpu_has_monitor_on_port(vgpu, PORT_B)) {
@@ -314,7 +315,7 @@ static void emulate_monitor_status_change(struct intel_vgpu *vgpu)
 			vgpu_vreg_t(vgpu, PCH_PORT_HOTPLUG) |=
 				PORTB_HOTPLUG_ENABLE;
 			vgpu_vreg_t(vgpu, GEN8_DE_PORT_ISR) |=
-				BXT_DE_PORT_HP_DDIB;
+				BXT_DE_PORT_HP_DDI(HPD_PORT_B);
 		}
 
 		if (intel_vgpu_has_monitor_on_port(vgpu, PORT_C)) {
@@ -344,7 +345,7 @@ static void emulate_monitor_status_change(struct intel_vgpu *vgpu)
 			vgpu_vreg_t(vgpu, PCH_PORT_HOTPLUG) |=
 				PORTC_HOTPLUG_ENABLE;
 			vgpu_vreg_t(vgpu, GEN8_DE_PORT_ISR) |=
-				BXT_DE_PORT_HP_DDIC;
+				BXT_DE_PORT_HP_DDI(HPD_PORT_C);
 		}
 
 		return;
